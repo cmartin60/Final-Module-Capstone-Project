@@ -1,11 +1,14 @@
 // import the express application and type definition
 import express, { Express } from "express";
-import userRouter from "../src/api/v1/routes/userRoutes";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+import morgan from "morgan";
+import userRoutes from "./api/v1/routes/userRoutes";
 
 // initialize the express application
 const app: Express = express();
-
-app.use(express.json());
 
 // Interface for health check response
 // An interface in TypeScript defines the structure or "shape" of an object.
@@ -15,6 +18,9 @@ interface HealthCheckResponse {
     timestamp: string;
     version: string;
 }
+
+app.use(morgan("combined"));
+app.use(express.json());
 
 // respond to GET request at endpoint "/" with message
 app.get("/", (req, res) => {
@@ -37,7 +43,7 @@ app.get("/api/v1/health", (req, res) => {
 });
 
 // API routes
-app.use("/api/v1/users", userRouter);
+app.use("/api/v1/users", userRoutes);
 
 
 export default app;
