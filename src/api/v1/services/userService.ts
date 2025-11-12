@@ -77,6 +77,11 @@ export const updateUser = async (
  * Deletes a user from Firestore
  */
 export const deleteUser = async (id: string): Promise<void> => {
+	const user = await getUserById(id);
+	if (!user) {
+		throw new Error(`User with ID ${id} not found`);
+	}
+
 	await deleteDocument(COLLECTION, id);
 };
 
