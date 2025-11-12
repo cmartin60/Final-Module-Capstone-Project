@@ -3,7 +3,7 @@ import * as userController from "../controllers/userController";
 import { validateRequest } from "../middleware/validate";
 import { userSchemas } from "../validation/schemas";
 
-const router = express.Router();
+const router: Router = express.Router();
 
 router.post("/", validateRequest(userSchemas.create), userController.createUser);
 router.get("/", userController.getAllUsers);
