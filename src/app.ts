@@ -1,8 +1,11 @@
 // import the express application and type definition
 import express, { Express } from "express";
+import userRouter from "../src/api/v1/routes/userRoutes";
 
 // initialize the express application
 const app: Express = express();
+
+app.use(express.json());
 
 // Interface for health check response
 // An interface in TypeScript defines the structure or "shape" of an object.
@@ -32,5 +35,9 @@ app.get("/api/v1/health", (req, res) => {
 
     res.json(healthData);
 });
+
+// API routes
+app.use("/api/v1/users", userRouter);
+
 
 export default app;
