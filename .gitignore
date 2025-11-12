@@ -1,3 +1,6 @@
 node_modules/
+dist/
 
 .vscode/
+.env
+bed-finalproject-capstone-firebase-adminsdk-fbsvc-964ced1d91.json
