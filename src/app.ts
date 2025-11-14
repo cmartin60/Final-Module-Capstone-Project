@@ -6,6 +6,7 @@ dotenv.config();
 
 import morgan from "morgan";
 import userRoutes from "./api/v1/routes/userRoutes";
+import bookRoutes from "./api/v1/routes/bookRoutes";
 
 // initialize the express application
 const app: Express = express();
@@ -44,6 +45,7 @@ app.get("/api/v1/health", (req, res) => {
 
 // API routes
 app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/books", bookRoutes);
 
 
 export default app;

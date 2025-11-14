@@ -120,11 +120,3 @@ export const deleteUser = async (
 		next(error);
 	}
 };
-
-export default {
-	createUser,
-	getAllUsers,
-	getUserById,
-	updateUser,
-	deleteUser,
-};
