@@ -61,4 +61,29 @@ export const bookSchemas: {
   },
 };
 
-export default { userSchemas, bookSchemas };
+// Borrow Schemas
+export const borrowSchemas: {
+  create: { body: ObjectSchema };
+  update: { params: ObjectSchema; body: ObjectSchema };
+} = {
+  create: {
+    body: Joi.object({
+      userId: Joi.string().required().messages({ 'any.required': 'User ID is required' }),
+      bookId: Joi.string().required().messages({ 'any.required': 'Book ID is required' }),
+      borrowedAt: Joi.string().isoDate().optional(),
+      dueDate: Joi.string().isoDate().required().messages({ 'any.required': 'Due date is required' }),
+    }),
+  },
+  update: {
+    params: Joi.object({
+      id: Joi.string().required().messages({ 'any.required': 'Borrow ID is required' }),
+    }),
+    body: Joi.object({
+      returnedAt: Joi.string().isoDate().optional(),
+      dueDate: Joi.string().isoDate().optional(),
+      status: Joi.string().valid('borrowed', 'returned').optional(),
+    }).min(1),
+  },
+};
+
+export default { userSchemas, bookSchemas, borrowSchemas };

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { BorrowRecord } from "../models/borrowRecordModel";
+import { BorrowRecord } from "../models/borrowModel";
 import * as borrowService from "../services/borrowService";
 import { HTTP_STATUS } from "../../../constants/httpConstants";
 import { successResponse } from "../models/responseModel";

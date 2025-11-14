@@ -1,5 +1,5 @@
 import { QuerySnapshot, DocumentData, DocumentSnapshot } from "firebase-admin/firestore";
-import { BorrowRecord } from "../models/borrowRecordModel";
+import { BorrowRecord } from "../models/borrowModel";
 import {
     createDocument,
     getDocuments,
