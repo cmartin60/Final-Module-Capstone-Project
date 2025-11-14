@@ -1,5 +1,6 @@
 import Joi, { ObjectSchema } from 'joi';
 
+//User Schemas
 export const userSchemas: {
   create: { body: ObjectSchema };
   update: { params: ObjectSchema; body: ObjectSchema };
@@ -27,4 +28,37 @@ export const userSchemas: {
   },
 };
 
-export default userSchemas;
+//Book Schemas
+export const bookSchemas: {
+  create: { body: ObjectSchema };
+  update: { params: ObjectSchema; body: ObjectSchema };
+} = {
+  create: {
+    body: Joi.object({
+      title: Joi.string().min(1).required().messages({
+        'any.required': 'Title is required',
+        'string.empty': 'Title cannot be empty',
+      }),
+      author: Joi.string().min(1).required().messages({
+        'any.required': 'Author is required',
+        'string.empty': 'Author cannot be empty',
+      }),
+      copiesAvailable: Joi.number().integer().min(0).required().messages({
+        'any.required': 'Copies available is required',
+        'number.base': 'Copies available must be a number',
+      }),
+    }),
+  },
+  update: {
+    params: Joi.object({
+      id: Joi.string().required().messages({ 'any.required': 'Book ID is required' }),
+    }),
+    body: Joi.object({
+      title: Joi.string().min(1).optional(),
+      author: Joi.string().min(1).optional(),
+      copiesAvailable: Joi.number().integer().min(0).optional(),
+    }).min(1),
+  },
+};
+
+export default { userSchemas, bookSchemas };
