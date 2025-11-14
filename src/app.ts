@@ -8,6 +8,8 @@ import morgan from "morgan";
 import userRoutes from "./api/v1/routes/userRoutes";
 import bookRoutes from "./api/v1/routes/bookRoutes";
 import borrowRoutes from "./api/v1/routes/borrowRoutes";
+import setupSwagger from "../config/swagger";
+
 
 // initialize the express application
 const app: Express = express();
@@ -49,5 +51,6 @@ app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/books", bookRoutes);
 app.use("/api/v1/borrows", borrowRoutes);
 
+setupSwagger(app);
 
 export default app;
