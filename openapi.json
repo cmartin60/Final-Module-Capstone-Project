@@ -1,0 +1,728 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Demo Application API Documentation",
+    "version": "1.0.0",
+    "description": "This is the API documentation for our in class demo application"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api/v1",
+      "description": "development"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "required": [
+          "name",
+          "email"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier for a User",
+            "example": "u_12345"
+          },
+          "name": {
+            "type": "string",
+            "description": "Full name of the user",
+            "example": "Alice Johnson"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User email address",
+            "example": "alice@example.com"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp",
+            "example": "2025-01-01T12:00:00Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp",
+            "example": "2025-01-02T12:00:00Z"
+          }
+        }
+      },
+      "Book": {
+        "type": "object",
+        "required": [
+          "title",
+          "author",
+          "copiesAvailable"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier for a Book",
+            "example": "b_98765"
+          },
+          "title": {
+            "type": "string",
+            "description": "Book title",
+            "example": "The Hobbit"
+          },
+          "author": {
+            "type": "string",
+            "description": "Book author",
+            "example": "J.R.R. Tolkien"
+          },
+          "copiesAvailable": {
+            "type": "integer",
+            "description": "Number of available copies",
+            "example": 3
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp",
+            "example": "2025-01-01T12:00:00Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp",
+            "example": "2025-01-02T12:00:00Z"
+          }
+        }
+      },
+      "BorrowRecord": {
+        "type": "object",
+        "required": [
+          "userId",
+          "bookId",
+          "borrowedAt",
+          "dueDate"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique borrow record id",
+            "example": "br_001"
+          },
+          "userId": {
+            "type": "string",
+            "description": "ID of the user who borrowed the book",
+            "example": "u_12345"
+          },
+          "bookId": {
+            "type": "string",
+            "description": "ID of the borrowed book",
+            "example": "b_98765"
+          },
+          "borrowedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the book was borrowed",
+            "example": "2025-03-01T09:00:00Z"
+          },
+          "dueDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the book is due",
+            "example": "2025-03-15T09:00:00Z"
+          },
+          "returnedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "When the book was returned (if returned)",
+            "example": null
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "borrowed",
+              "returned"
+            ],
+            "description": "Current status of the borrow",
+            "example": "borrowed"
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/books": {
+      "post": {
+        "summary": "Create a new Book",
+        "tags": [
+          "Books"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "author",
+                  "copiesAvailable"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": "The Hobbit"
+                  },
+                  "author": {
+                    "type": "string",
+                    "example": "J.R.R. Tolkien"
+                  },
+                  "copiesAvailable": {
+                    "type": "integer",
+                    "example": 3
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Book created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Book"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data"
+          }
+        }
+      },
+      "get": {
+        "summary": "Retrieve a list of books",
+        "tags": [
+          "Books"
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of books",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Book"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/books/{id}": {
+      "get": {
+        "summary": "Get a book by ID",
+        "tags": [
+          "Books"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Book ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Book found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Book"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Book not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update an existing book",
+        "tags": [
+          "Books"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Book ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "author": {
+                    "type": "string"
+                  },
+                  "copiesAvailable": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Book updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Book"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data"
+          },
+          "404": {
+            "description": "Book not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a book by ID",
+        "tags": [
+          "Books"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Book ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Book deleted successfully (no content)"
+          },
+          "404": {
+            "description": "Book not found"
+          }
+        }
+      }
+    },
+    "/borrows": {
+      "post": {
+        "summary": "Create a new Borrow record",
+        "tags": [
+          "Borrows"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "userId",
+                  "bookId",
+                  "dueDate"
+                ],
+                "properties": {
+                  "userId": {
+                    "type": "string",
+                    "example": "u1"
+                  },
+                  "bookId": {
+                    "type": "string",
+                    "example": "b1"
+                  },
+                  "borrowedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "dueDate": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Borrow record created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BorrowRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data"
+          }
+        }
+      },
+      "get": {
+        "summary": "Retrieve a list of borrow records",
+        "tags": [
+          "Borrows"
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of borrow records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BorrowRecord"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/borrows/{id}": {
+      "get": {
+        "summary": "Get a borrow record by ID",
+        "tags": [
+          "Borrows"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Borrow record ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Borrow record found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BorrowRecord"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Borrow record not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update an existing borrow record (e.g., mark returned)",
+        "tags": [
+          "Borrows"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Borrow record ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "returnedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "borrowed",
+                      "returned"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Borrow record updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BorrowRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data"
+          },
+          "404": {
+            "description": "Borrow record not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a borrow record by ID",
+        "tags": [
+          "Borrows"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Borrow record ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Borrow record deleted successfully (no content)"
+          },
+          "404": {
+            "description": "Borrow record not found"
+          }
+        }
+      }
+    },
+    "/users": {
+      "post": {
+        "summary": "Create a new User",
+        "tags": [
+          "Users"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "email"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Alice Johnson"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "alice.johnson@example.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data"
+          }
+        }
+      },
+      "get": {
+        "summary": "Retrieve a list of users",
+        "tags": [
+          "Users"
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "summary": "Get a user by ID",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update an existing user",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a user by ID",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "User deleted successfully (no content)"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    }
+  },
+  "tags": []
+}
