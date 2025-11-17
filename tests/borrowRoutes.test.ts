@@ -22,7 +22,10 @@ describe('Borrow Routes', () => {
   });
 
   it('POST /api/v1/borrows should call createBorrow controller with valid data', async () => {
-    await request(app).post('/api/v1/borrows/').send({ userId: 'u1', bookId: 'b1' });
+    const dueDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+    await request(app)
+      .post('/api/v1/borrows/')
+      .send({ userId: 'u1', bookId: 'b1', dueDate });
     expect(borrowController.createBorrow).toHaveBeenCalled();
   });
 
