@@ -1,5 +1,15 @@
 // import the express application and type definition
 import express, { Express } from "express";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+import morgan from "morgan";
+import userRoutes from "./api/v1/routes/userRoutes";
+import bookRoutes from "./api/v1/routes/bookRoutes";
+import borrowRoutes from "./api/v1/routes/borrowRoutes";
+import setupSwagger from "../config/swagger";
+
 
 // initialize the express application
 const app: Express = express();
@@ -12,6 +22,9 @@ interface HealthCheckResponse {
     timestamp: string;
     version: string;
 }
+
+app.use(morgan("combined"));
+app.use(express.json());
 
 // respond to GET request at endpoint "/" with message
 app.get("/", (req, res) => {
@@ -32,5 +45,12 @@ app.get("/api/v1/health", (req, res) => {
 
     res.json(healthData);
 });
+
+// API routes
+app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/books", bookRoutes);
+app.use("/api/v1/borrows", borrowRoutes);
+
+setupSwagger(app);
 
 export default app;
